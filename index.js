@@ -10,12 +10,25 @@ const TOKEN = process.env.TOKEN
 
 const LOAD_SLASH = process.argv[2] == "load"
 
-const CLIENT_ID = "924846888929337354"
-const GUILD_ID = "924832445050781766"
+const CLIENT_ID = "888828682918064169"
+
+const GUILD_ID = [
+    "846950166702850048", // KU81
+    "858406135856627712", // sugar daddy
+    "945370321719009330", // Top Secret
+    "959175667738640395", // app
+    "966733520338821210", // Server Test
+    "969131573402284072", //Media for Learning
+    "728889612965249044",
+    "941286057884917770", // Consci Let saaaa goooo!!!
+    "432792639600066570", // Family
+    "888033988789276702"  //devZone
+]
 
 const client = new Discord.Client({
     intents: [
         "GUILDS",
+        "GUILD_MEMBERS",
         "GUILD_VOICE_STATES"
     ]
 })
@@ -35,24 +48,22 @@ for (const file of slashFiles){
     const slashcmd = require(`./slash/${file}`)
     client.slashcommands.set(slashcmd.data.name, slashcmd)
     if (LOAD_SLASH) commands.push(slashcmd.data.toJSON())
+    console.log(`Loaded slash command: ${slashcmd.data.name}`)
 }
 
 if (LOAD_SLASH) {
     const rest = new REST({ version: "9" }).setToken(TOKEN)
-    console.log("Deploying slash commands")
-    rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {body: commands})
-    .then(() => {
-        console.log("Successfully loaded")
-        process.exit(0)
+    GUILD_ID.forEach(async (guildId) => {
+        console.log("Deploying slash commands")
+        rest.put(Routes.applicationGuildCommands(CLIENT_ID, guildId), {body: commands})
+        .then(() => {
+            console.log("Successfully loaded")
+        })
+        .catch((err) => {
+            console.log("Error: ", guildId)
+        })
     })
-    .catch((err) => {
-        if (err){
-            console.log(err)
-            process.exit(1)
-        }
-    })
-}
-else {
+} else {
     client.on("ready", () => {
         console.log(`Logged in as ${client.user.tag}`)
     })
