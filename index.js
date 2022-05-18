@@ -12,18 +12,7 @@ const LOAD_SLASH = process.argv[2] == "load"
 
 const CLIENT_ID = "888828682918064169"
 
-const GUILD_ID = [
-    "846950166702850048", // KU81
-    "858406135856627712", // sugar daddy
-    "945370321719009330", // Top Secret
-    "959175667738640395", // app
-    "966733520338821210", // Server Test
-    "969131573402284072", //Media for Learning
-    "728889612965249044",
-    "941286057884917770", // Consci Let saaaa goooo!!!
-    "432792639600066570", // Family
-    "888033988789276702"  //devZone
-]
+const GUILD_ID = [ ]
 
 const client = new Discord.Client({
     intents: [

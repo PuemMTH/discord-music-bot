@@ -22,6 +22,16 @@ module.exports = {
 	run: async ({ client, interaction }) => {
         if (interaction.options.getSubcommand() === "studen") {
             let id = interaction.options.getString("id")
+            if (id.length !== 10) {
+                await interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle(`ข้อมูลนักศึกษา`)
+                            .setDescription(`ไม่พบข้อมูลนักศึกษารหัส ${id}`)
+                    ]
+                })
+                return
+            }
             await axios.get(`http://nisit-ku.ku.ac.th/WebForm_Index_Report.aspx?stdid=${id}&h=0`)
                 .then(async ({ data }) => {
                     try{
@@ -43,7 +53,7 @@ module.exports = {
                             }
                         });
                         if(student.length > 0) {
-                            interaction.editReply({
+                            await interaction.editReply({
                                 embeds: [
                                     new MessageEmbed()
                                         .setTitle(`ข้อมูลนักศึกษา`)
@@ -56,29 +66,42 @@ module.exports = {
                                         .setColor(0x00AE86)
                                 ]
                             })
+                            return
                         }else{
-                            interaction.editReply({
+                            await interaction.editReply({
                                 embeds: [
                                     new MessageEmbed()
                                         .setTitle(`ข้อมูลนักศึกษา`)
                                         .setDescription(`ไม่พบข้อมูลนักศึกษารหัส ${id}`)
                                 ]
                             })
+                            return
                         }
                     }catch{
-                        interaction.editReply({
+                        await interaction.editReply({
                             embeds: [
                                 new MessageEmbed()
                                     .setTitle(`ข้อมูลนักศึกษา`)
                                     .setDescription(`ไม่พบข้อมูลนักศึกษารหัส ${id}`)
                             ]
                         })
+                        return
                     }
                     
                 });
         }
         if (interaction.options.getSubcommand() === "transcript") {
             const tranid = interaction.options.getString("tranid")
+            if (tranid.length !== 10) {
+                await interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle(`ข้อมูลนักศึกษา`)
+                            .setDescription(`ไม่พบข้อมูลนักศึกษารหัส ${tranid}`)
+                    ]
+                })
+                return
+            }
             const title_table = [];
             async function scrapeData(url) {
                 try {
@@ -114,6 +137,7 @@ module.exports = {
                                     .setDescription(`Timeout เนื่่องจากไม่สามารถดึงข้อมูลได้`)
                             ]
                         })
+                        return
                     }
                 }
             }
@@ -139,6 +163,7 @@ module.exports = {
                                 .setColor(0x00AE86)
                         ]
                     })
+                    return
                 }
             }
         }
