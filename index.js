@@ -13,7 +13,7 @@ const LOAD_SLASH = process.argv[2] == "load"
 const CLIENT_ID = "888828682918064169"
 
 const GUILD_ID = [
-
+  
 ]
 
 const client = new Discord.Client({

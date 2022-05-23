@@ -10,10 +10,10 @@ module.exports = {
             .addSubcommand((subcommand) =>
                 subcommand
                     .setName("stat8")
-                    .setDescription("Loads a single song from a url")
-                    .addStringOption((option) => option.setName("table").setDescription("pattern ").setRequired(true))
+                    .setDescription("Loads a math stat 8")
+                    .addStringOption((option) => option.setName("table").setDescription("ข้อมูล1,ข้อมูล2....ข้อมูลn;nแถวที่1,nแถวที่1...nแถวที่n").setRequired(true))
             ),
-           
+            
 	run: async ({ client, interaction }) => {
         if (interaction.options.getSubcommand() === "stat8") {
             let table = interaction.options.getString("table")
@@ -58,9 +58,9 @@ module.exports = {
                 let pow_array_floot = pow_array_string.map(Number);
                 // let pow_sum = pow_array.reduce((a, b) => a + b, 0);
             
-                let t = pow_array_floot.reduce((a, b) => (a + b), 0);
+                let t = input_array.reduce((a, b) => (a + b), 0);
                 let sumPowTwo = parseFloat(Math.pow(sum,2).toFixed(4))
-                let Ct = parseFloat((sumPowTwo / 12).toFixed(4))
+                let Ct = parseFloat((sumPowTwo / input_array.length).toFixed(4))
             
                 let return_value = []; 
                 for(let i = 0; i < sumRow.length; i++){
@@ -68,12 +68,14 @@ module.exports = {
                     return_value.push(parseFloat(SSb.toFixed(4)));
                 }
             
-                console.log(input_array);
-                console.log(columns_array);
-                console.log(Row);
-                console.log(sumRow);
-                
-                let SSt = parseFloat((t - Ct));
+                // console.log(input_array);
+                // console.log(columns_array);
+                // console.log(Row);
+                // console.log(sumRow);
+                // console.log(`sumPowTwo: ${pow_array_floot.reduce((a, b) => a + b, 0) } || Ct: ${Ct}`);
+
+                // sumPowTwo
+                let SSt = parseFloat(((pow_array_floot.reduce((a, b) => a + b, 0)) - Ct));
                 let SSb = (return_value.reduce((a, b) => a + b, 0)) - Ct;
             
                 // SSt fix 4 decimal
@@ -85,21 +87,21 @@ module.exports = {
                 let F = parseFloat((MSb / MSw).toFixed(4));
             
                 // Math Stat
-                console.table({
-                      Input: input_array,
-                      pow2: pow_array_floot,
-                      n: input_array.length,
-                      t: t,
-                      Ct: Ct,
-                      After_SSt: SSt,
-                      After_SSb: SSb,
-                      Before_SSt: BeSSt,
-                      Before_SSb: BeSSb,
-                      SSw: SSw,
-                      MSb: MSb,
-                      MSw: MSw,
-                      F: F
-                })
+                // console.table({
+                //       Input: input_array,
+                //       pow2: pow_array_floot,
+                //       n: input_array.length,
+                //       t: t,
+                //       Ct: Ct,
+                //       After_SSt: SSt,
+                //       After_SSb: SSb,
+                //       Before_SSt: BeSSt,
+                //       Before_SSb: BeSSb,
+                //       SSw: SSw,
+                //       MSb: MSb,
+                //       MSw: MSw,
+                //       F: F
+                // })
 
                 await interaction.editReply({
                     embeds: [
@@ -113,10 +115,20 @@ module.exports = {
                             .addField("ค่าของ MSb ", `${MSb}`)
                             .addField("ค่าของ MSw ", `${MSw}`)
                             .addField("ค่าของ F ", `${F}`)
+                            .setThumbnail(`https://avatars.githubusercontent.com/u/59855164?s=400&u=025e910a15293edb8a5cea93badc8ee01ce0784d&v=4`)
+                            .setColor("#00ff00")
                         ]
                 })
             }catch{
-              console.log("error");
+                await interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle(`จะใช้บอทหัดดูวิธีใช้ก่อนซะบ้างงงง`)
+                            .setDescription(`พิมพ์แบบนี้ \nข้อมูล1,ข้อมูล2....ข้อมูลn;nแถวที่1,nแถวที่1...nแถวที่n\n ยกตัวอย่าง 1,22,33,44,55,22,43,44,55,66,77,88;4,4,4`)
+                            .setThumbnail(`https://avatars.githubusercontent.com/u/59855164?s=400&u=025e910a15293edb8a5cea93badc8ee01ce0784d&v=4`)
+                            .setColor("#ff0000")
+                        ]
+                })
             }
         }
     }
