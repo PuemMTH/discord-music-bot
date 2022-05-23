@@ -63,6 +63,7 @@ module.exports = {
                                         .addField("คณะ", student[2].text)
                                         .addField("วิทยาเขต", student[5].text)
                                         .addField("สถานะ", student[4].text)
+                                        // .addField("ข้อมูลนักศึกษา", `[คลิกที่นี่](http://nisit-ku.ku.ac.th/WebForm_Index_Report.aspx?stdid=${id}&h=0)`)
                                         .setColor(0x00AE86)
                                 ]
                             })
