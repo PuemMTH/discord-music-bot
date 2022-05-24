@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders")
 const { MessageEmbed } = require("discord.js")
-const axios = require("axios")
-const cheerio = require("cheerio");
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -10,8 +8,14 @@ module.exports = {
             .addSubcommand((subcommand) =>
                 subcommand
                     .setName("stat8")
-                    .setDescription("Loads a math stat 8")
-                    .addStringOption((option) => option.setName("table").setDescription("ข้อมูล1,ข้อมูล2....ข้อมูลn;nแถวที่1,nแถวที่1...nแถวที่n").setRequired(true))
+                    .setDescription("Loads a math stat 8 & 9")
+                    .addStringOption((option) => option.setName("table").setDescription("ข้อมูล1,ข้อมูล2....ข้อมูลn;nแถวที่1,nแถวที่2...nแถวที่n").setRequired(true))
+            )
+            .addSubcommand((subcommand) =>
+                subcommand
+                    .setName("stat9")
+                    .setDescription("Loads a math stat 8 & 9")
+                    .addStringOption((option) => option.setName("table").setDescription("ข้อมูล1,ข้อมูล2....ข้อมูลn;nแถวที่1,nแถวที่2...nแถวที่n").setRequired(true))
             ),
             
 	run: async ({ client, interaction }) => {
@@ -81,40 +85,47 @@ module.exports = {
                 // SSt fix 4 decimal
                 BeSSt = parseFloat(SSt.toFixed(4));
                 BeSSb = parseFloat(SSb.toFixed(4));
-                SSw = BeSSt - BeSSb;
+                SSw = parseFloat((BeSSt - BeSSb).toFixed(4));
                 let MSb = BeSSb / (columns_array.length - 1);
                 let MSw = parseFloat((SSw / (input_array.length - columns_array.length)).toFixed(4));
                 let F = parseFloat((MSb / MSw).toFixed(4));
+
+                let DFb = `${columns_array.length} - 1 = ${columns_array.length - 1}`;
+                let DFw = `${input_array.length} - ${columns_array.length} = ${input_array.length - columns_array.length}`;
             
                 // Math Stat
-                // console.table({
-                //       Input: input_array,
-                //       pow2: pow_array_floot,
-                //       n: input_array.length,
-                //       t: t,
-                //       Ct: Ct,
-                //       After_SSt: SSt,
-                //       After_SSb: SSb,
-                //       Before_SSt: BeSSt,
-                //       Before_SSb: BeSSb,
-                //       SSw: SSw,
-                //       MSb: MSb,
-                //       MSw: MSw,
-                //       F: F
-                // })
+                console.table({
+                    Input: input_array,
+                    pow2: pow_array_floot,
+                    n: input_array.length,
+                    t: t,
+                    Ct: Ct,
+                    After_SSt: SSt,
+                    After_SSb: SSb,
+                    Before_SSt: BeSSt,
+                    Before_SSb: BeSSb,
+                    DFb: DFb,
+                    DFw: DFw,
+                    SSw: SSw,
+                    MSb: MSb,
+                    MSw: MSw,
+                    F: F
+                })
 
                 await interaction.editReply({
                     embeds: [
                         new MessageEmbed()
-                            .setTitle(`คำตอบของคุณ`)
-                            .setDescription(`ข้อมูล: ${input_array}\n แบ่งตามคอลัม: ${columns_array} \n จำนวนข้อมูล: ${input_array.length} \n ข้อมูลกำลัง 2: ${pow_array_floot}`)
-                            .addField("ค่าของ Ct ", `${Ct}`)
-                            .addField("ค่าของ SSt ", `${BeSSt}`)
-                            .addField("ค่าของ SSb ", `${BeSSb}`)
-                            .addField("ค่าของ SSw ", `${SSw}`)
-                            .addField("ค่าของ MSb ", `${MSb}`)
-                            .addField("ค่าของ MSw ", `${MSw}`)
-                            .addField("ค่าของ F ", `${F}`)
+                            .setTitle(`ใช้ในการเช็คคำตอบเท่านั้น ใช้ในบทที่ 8`)
+                            .setDescription(`ข้อมูล: ${input_array} \nข้อมูล^2: ${pow_array_floot} \nแบ่งตามคอลัม: ${columns_array} \nจำนวนข้อมูล: ${input_array.length}`)
+                            .addField("ค่าของ Ct", `${Ct}`, true)
+                            .addField("ค่าของ SSt", `${BeSSt}`, true)
+                            .addField("ค่าของ SSb", `${BeSSb}`, true)
+                            .addField("ค่าของ SSw", `${SSw}`, true)
+                            .addField("ค่าของ DFb k-1", `${DFb}`, true)
+                            .addField("ค่าของ DFw n-k", `${DFw}`, true)
+                            .addField("ค่าของ MSb ", `${MSb}`, true)
+                            .addField("ค่าของ MSw ", `${MSw}`, true)
+                            .addField("ค่าของ F ", `${F}`, true)
                             .setThumbnail(`https://avatars.githubusercontent.com/u/59855164?s=400&u=025e910a15293edb8a5cea93badc8ee01ce0784d&v=4`)
                             .setColor("#00ff00")
                         ]
@@ -130,6 +141,87 @@ module.exports = {
                         ]
                 })
             }
+        }
+        if (interaction.options.getSubcommand() === "stat9"){
+            try{
+                let OiPi = interaction.options.getString("table")
+                // let OiPi = "52,58,60,55,40,35;0.166666667,0.166666667,0.166666667,0.166666667,0.166666667,0.166666667";
+                let Oi = OiPi.split(";")[0].split(",").map(Number);
+                let Pi = OiPi.split(";")[1].split(",").map(Number);
+                let N = Oi.length;
+                
+                let OiSum = parseFloat(Oi.reduce((a, b) => a + b, 0).toFixed(4));
+                let Ei = [];
+                let ThinkEi = [];
+                let OiDeleteEi = [];
+                let ThinkOiDeleteEi = [];
+                let OiDeleteEiPow2 = [];
+                let ThinkOiDeleteEiPow2 = [];
+                let OiDeleteEiPow2DivideEi = [];
+                let ThinkOiDeleteEiPow2DivideEi = [];
+                    
+                for (let i = 0; i < N; i++) {
+                  Ei[i] = parseFloat((OiSum * Pi[i]).toFixed(4));
+                  ThinkEi[i] = `${String.fromCharCode(i + 97)}: ${OiSum} * ${Pi[i]} = ${(OiSum * Pi[i]).toFixed(4)}`;
+                }
+                    
+                for (let i = 0; i < N; i++) {
+                  OiDeleteEi[i] = parseFloat((Oi[i] - Ei[i]).toFixed(4));
+                  ThinkOiDeleteEi[i] = `${String.fromCharCode(i + 97)}: ${Oi[i]} - ${Ei[i]} = ${(Oi[i] - Ei[i]).toFixed(4)}`;
+                }
+                    
+                for (let i = 0; i < N; i++) {
+                  OiDeleteEiPow2[i] = parseFloat((OiDeleteEi[i] * OiDeleteEi[i]).toFixed(4));
+                  ThinkOiDeleteEiPow2[i] = `${String.fromCharCode(i + 97)}: ${OiDeleteEi[i]} * ${OiDeleteEi[i]} = ${(OiDeleteEi[i] * OiDeleteEi[i]).toFixed(4)}`;
+                }
+                    
+                for (let i = 0; i < N; i++) {
+                  OiDeleteEiPow2DivideEi[i] = parseFloat((OiDeleteEiPow2[i] / Ei[i]).toFixed(4));
+                  ThinkOiDeleteEiPow2DivideEi[i] = `${String.fromCharCode(i + 97)}: ${OiDeleteEiPow2[i]} / ${Ei[i]} = ${(OiDeleteEiPow2[i] / Ei[i]).toFixed(4)}`;
+                }
+
+                let SumOiDeleteEiPow2DivideEi = parseFloat(OiDeleteEiPow2DivideEi.reduce((a, b) => a + b, 0).toFixed(4));
+                
+                // console.table({
+                //   Oi,
+                //   Pi,
+                //   Ei,
+                //   OiDeleteEi,
+                //   OiDeleteEiPow2,
+                //   OiDeleteEiPow2DivideEi
+                // });
+                    
+                // console.log(ThinkEi);
+                // console.log(ThinkOiDeleteEi);
+                // console.log(ThinkOiDeleteEiPow2);
+                // console.log(ThinkOiDeleteEiPow2DivideEi);
+
+                let respon = new MessageEmbed()
+                await respon.setTitle(`ใช้ในการเช็คคำตอบเท่านั้น ใช้ในบทที่ 9`)
+                // await respon.addField("ค่าของ Oi ", `${Oi}`, true)
+                // await respon.setDescription(`คำตอบที่ถูกต้องคือ \n${ThinkEi.join("\n")}`)
+                await respon.addField("ค่าของ Ei ", `\n${ThinkEi.join("\n")}`, false)
+                await respon.addField("ค่าของ Oi - Ei ", `\n${ThinkOiDeleteEi.join("\n")}`, false)
+                await respon.addField("ค่าของ (Oi - Ei)^2 ", `\n${ThinkOiDeleteEiPow2.join("\n")}`, false)
+                await respon.addField("ค่าของ (Oi - Ei)^2 / Ei ", `\n${ThinkOiDeleteEiPow2DivideEi.join("\n")}`, false)
+                await respon.addField("ค่าของ X^2 ", `\n${SumOiDeleteEiPow2DivideEi}`, false)
+                await respon.setThumbnail(`https://avatars.githubusercontent.com/u/59855164?s=400&u=025e910a15293edb8a5cea93badc8ee01ce0784d&v=4`)
+                await respon.setColor("#00ff00")
+                await interaction.editReply({
+                    embeds: [respon]
+                })
+              
+              }catch{
+                await interaction.editReply({
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle(`จะใช้บอทหัดดูวิธีใช้ก่อนซะบ้างงงง`)
+                            .setDescription(`พิมพ์แบบนี้ \nข้อมูล1,ข้อมูล2....ข้อมูลn;nแถวที่1,nแถวที่1...nแถวที่n\n ยกตัวอย่าง 52,58,60,55,40,35;0.1,0.1,0.1,0.1,0.1,0.1`)
+                            .setThumbnail(`https://avatars.githubusercontent.com/u/59855164?s=400&u=025e910a15293edb8a5cea93badc8ee01ce0784d&v=4`)
+                            .setColor("#ff0000")
+                        ]
+                })
+              }
         }
     }
 }
